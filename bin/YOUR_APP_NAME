@@ -1,0 +1,88 @@
+#!/usr/bin/env node
+
+/**
+ * You should rename this file to the name of your app. Why? Because that's a
+ * pretty cool thing to do. Basically, build a CLI interface for your
+ * application. It's a pretty handy thing to do - especially if you're releasing
+ * your app to the wild.
+ *
+ * This is by default incredibly basic (start a a dev or production server), but
+ * could be infintely more powerful based on your needs.
+ *
+ * Simply do `YOUR_APP_NAME --dev`
+ */
+
+const path = require('path');
+const spawn = require('child_process').spawn;
+const execSync = require('child_process').execSync;
+const program = require('commander');
+const colors = require('colors/safe');
+
+// Make these files executable.
+execSync(`chmod +x ${__dirname}/*`);
+
+// Parse CLI. Make this fancy if you want using commander.
+program
+  .version('0.1.0')
+  .option('-d, --dev')
+  .option('-d, --release')
+  .parse(process.argv);
+
+/**
+ * Attractive logging because we deserve it.
+ *
+ * @param {string} color  Any color supported by colors module.
+ * @param {string} str  The string to log.
+ * @return {void}
+ */
+function log(color, str) {
+  console.log(colors[color](str.replace(/(\r?\n|\r)$/, '').trim()));
+}
+
+/**
+ * Handle a child process but setting it up with nice stdout logging.
+ *
+ * @param {string} n  The name of the process - this could be anything.
+ * @param {ChildProcess} p  The actual spawn child process.
+ * @param {string} c  A color to log.
+ * @return {void}
+ */
+function registerProcess(n, p, c) {
+  console.info(colors.grey('Registering process:'), colors.grey.bold(name));
+  p.stdout.on('data', data => log(c, `${colors.underline.bold(name)}:\n${data.toString()}`));
+  p.stderr.on('data', data => log('red', `${colors.bold.underline(name)}:\n${data.toString()}`));
+  p.on('close', code => log('yellow', `${colors.bold(name)}:\nprocess exited code: ${code}`));
+  p.on('error', err => console.error(name, err));
+}
+
+//
+// Register any commands you want to run based on the CLI flag provided.
+//
+if (program.dev) {
+  registerProcess('Web Server', spawn('node', [__dirname + '/start-server'],
+    {
+      env: Object.assign({}, process.env, {
+        NODE_ENV: 'development',
+        PORT: 3000
+      })
+    }
+  ), 'blue');
+
+  registerProcess('CSS Build', spawn('node', [__dirname + '/build-stylus'],
+    {
+      env: Object.assign({}, process.env, {
+        NODE_ENV: 'development'
+      })
+    }
+  ), 'green');
+
+  registerProcess('JS Build', spawn('node', [__dirname + '/build-js'],
+    {
+      env: Object.assign({}, process.env, {
+        NODE_ENV: 'development'
+      })
+    }
+  ), 'cyan');
+} else if (program.release) {
+  // Same as dev, execpt for production.
+}

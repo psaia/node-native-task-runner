@@ -1,0 +1,43 @@
+#!/usr/bin/env node
+
+// Below is an example of basic es6 w/ browserify compilation. Adjust as needed.
+
+// const path = require('path');
+// const watch = require('watch');
+// const stylus = require('stylus');
+// const fs = require('fs');
+// const nib = require('nib');
+// const jeet = require('jeet');
+// const rupture = require('rupture');
+//
+// const entry = './src/stylus/main.styl';
+// const output = './src/www/main.css';
+//
+// function compile() {
+//   console.time('Compiled stylus');
+//
+//   stylus(fs.readFileSync(entry, {
+//     encoding: 'utf8'
+//   }))
+//     .set('compress', true)
+//     .set('filename', 'main.css')
+//     .set('paths', [
+//       './',
+//       './src/stylus'
+//     ])
+//     .use(rupture())
+//     .use(jeet())
+//     .use(nib())
+//     .render(function(err, css) {
+//       fs.writeFileSync(output, css);
+//       console.timeEnd('Compiled stylus');
+//     });
+// }
+//
+// if (process.env.NODE_ENV === 'production') {
+//   compile();
+// } else {
+//   watch.watchTree(path.join(__dirname, '../', '/src/stylus/'), function() {
+//     compile();
+//   });
+// }
